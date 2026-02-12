@@ -1,41 +1,40 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { MyBooking } from './my-booking';
+import { MyHostedBookings } from './my-hosted-bookings';
 import { BookingService } from '../../services/booking.service';
-import { CarService } from '../../services/car.service';
+import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
 import { ScrollService } from '../../services/scroll.service';
 import { of } from 'rxjs';
-import { provideRouter } from '@angular/router';
 
-describe('MyBooking', () => {
-  let component: MyBooking;
-  let fixture: ComponentFixture<MyBooking>;
+describe('MyHostedBookings', () => {
+  let component: MyHostedBookings;
+  let fixture: ComponentFixture<MyHostedBookings>;
   let scrollServiceSpy: jasmine.SpyObj<ScrollService>;
   let bookingServiceSpy: jasmine.SpyObj<BookingService>;
-  let carServiceSpy: jasmine.SpyObj<CarService>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
   let alertServiceSpy: jasmine.SpyObj<AlertService>;
 
   beforeEach(async () => {
     scrollServiceSpy = jasmine.createSpyObj('ScrollService', ['scrollToTop', 'scrollToElement']);
-    bookingServiceSpy = jasmine.createSpyObj('BookingService', ['getMyBookings']);
-    carServiceSpy = jasmine.createSpyObj('CarService', ['getCarById']);
+    bookingServiceSpy = jasmine.createSpyObj('BookingService', ['getMyHostedBookings']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isLoggedIn']);
     alertServiceSpy = jasmine.createSpyObj('AlertService', ['confirm', 'success', 'error']);
 
-    bookingServiceSpy.getMyBookings.and.returnValue(of({ result: true, data: [] }));
+    authServiceSpy.isLoggedIn.and.returnValue(true);
+    bookingServiceSpy.getMyHostedBookings.and.returnValue(of({ result: true, data: [] }));
 
     await TestBed.configureTestingModule({
-      imports: [MyBooking],
+      imports: [MyHostedBookings],
       providers: [
         { provide: ScrollService, useValue: scrollServiceSpy },
         { provide: BookingService, useValue: bookingServiceSpy },
-        { provide: CarService, useValue: carServiceSpy },
-        { provide: AlertService, useValue: alertServiceSpy },
-        provideRouter([])
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: AlertService, useValue: alertServiceSpy }
       ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MyBooking);
+    fixture = TestBed.createComponent(MyHostedBookings);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -48,6 +47,6 @@ describe('MyBooking', () => {
     component.setActiveTab('past');
     tick(50);
     expect(scrollServiceSpy.scrollToTop).toHaveBeenCalledWith('smooth');
-    expect(scrollServiceSpy.scrollToElement).toHaveBeenCalledWith('my-bookings-top', 'smooth');
+    expect(scrollServiceSpy.scrollToElement).toHaveBeenCalledWith('hosted-bookings-top', 'smooth');
   }));
 });

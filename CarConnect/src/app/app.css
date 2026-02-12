@@ -7,4 +7,30 @@ body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden; /* Prevent horizontal scroll */
+  min-height: 100dvh;
+}
+
+/* Responsiveness Helpers */
+.h-screen-dynamic {
+  height: 100dvh;
+}
+
+.min-h-screen-dynamic {
+  min-height: 100dvh;
+}
+
+.h-screen-small {
+  height: 100svh;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .show-mobile-only {
+    display: none !important;
+  }
 }

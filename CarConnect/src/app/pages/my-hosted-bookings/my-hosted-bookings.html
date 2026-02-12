@@ -1,15 +1,15 @@
-<div class="hosted-bookings-container">
+<div class="hosted-bookings-container" id="hosted-bookings-top">
   <div class="page-header">
     <h2>Bookings for My Cars</h2>
     <p class="subtitle">Manage bookings for the cars you have listed.</p>
     
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="activeTab = 'upcoming'">
+      <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="setActiveTab('upcoming')">
         Upcoming
         <span class="count-badge" *ngIf="upcomingBookings.length > 0">{{ upcomingBookings.length }}</span>
       </button>
-      <button class="tab-btn" [class.active]="activeTab === 'past'" (click)="activeTab = 'past'">
+      <button class="tab-btn" [class.active]="activeTab === 'past'" (click)="setActiveTab('past')">
         Past
         <span class="count-badge" *ngIf="pastBookings.length > 0">{{ pastBookings.length }}</span>
       </button>

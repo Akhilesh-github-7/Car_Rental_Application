@@ -2,7 +2,7 @@
   display: block;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - 70px);
 }
 
 .hosted-bookings-container {

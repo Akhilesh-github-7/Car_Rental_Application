@@ -1,10 +1,11 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LocationService } from '../../services/location.service';
 import { NewCarService } from '../../services/new-car.service';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
+import { ScrollService } from '../../services/scroll.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
   styleUrl: './host-your-car.css',
 })
 export class HostYourCar implements OnInit {
+  private scrollService = inject(ScrollService);
   locations: any[] = [];
   currentStep = 1;
   totalSteps = 3;
@@ -97,6 +99,10 @@ export class HostYourCar implements OnInit {
     if (this.validateStep(this.currentStep)) {
       this.currentStep++;
       this.submissionError.set(null);
+      setTimeout(() => {
+        this.scrollService.scrollToTop('smooth');
+        this.scrollService.scrollToElement('host-car-top', 'smooth');
+      }, 50);
     }
   }
 
@@ -104,6 +110,10 @@ export class HostYourCar implements OnInit {
     if (this.currentStep > 1) {
       this.currentStep--;
       this.submissionError.set(null);
+      setTimeout(() => {
+        this.scrollService.scrollToTop('smooth');
+        this.scrollService.scrollToElement('host-car-top', 'smooth');
+      }, 50);
     }
   }
 

@@ -292,7 +292,7 @@
   }
 
   .navbar-links.active {
-    max-height: 100vh;
+    max-height: 100dvh;
     padding: 1rem 0 2rem;
   }
 

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingService } from '../../services/booking.service';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
+import { ScrollService } from '../../services/scroll.service';
 
 @Component({
   selector: 'app-my-hosted-bookings',
@@ -11,6 +12,7 @@ import { AlertService } from '../../services/alert.service';
   styleUrl: './my-hosted-bookings.css',
 })
 export class MyHostedBookings implements OnInit {
+  private scrollService = inject(ScrollService);
   bookings: any[] = [];
   upcomingBookings: any[] = [];
   pastBookings: any[] = [];
@@ -28,6 +30,15 @@ export class MyHostedBookings implements OnInit {
     if (this.authService.isLoggedIn()) {
       this.loadMyHostedBookings();
     }
+  }
+
+  setActiveTab(tab: 'upcoming' | 'past') {
+    this.activeTab = tab;
+    // Ensure the scroll happens after DOM is updated
+    setTimeout(() => {
+      this.scrollService.scrollToTop('smooth');
+      this.scrollService.scrollToElement('hosted-bookings-top', 'smooth');
+    }, 50);
   }
 
   loadMyHostedBookings() {
@@ -81,7 +92,7 @@ export class MyHostedBookings implements OnInit {
       }, 0);
       
     if (this.upcomingBookings.length === 0 && this.pastBookings.length > 0) {
-      this.activeTab = 'past';
+      this.setActiveTab('past');
     }
   }
 

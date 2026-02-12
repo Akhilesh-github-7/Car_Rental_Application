@@ -2,7 +2,7 @@
   display: block;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .search-page-container {

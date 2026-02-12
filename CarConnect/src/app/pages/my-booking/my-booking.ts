@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingService } from '../../services/booking.service';
 import { CarService } from '../../services/car.service';
 import { RouterLink } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
+import { ScrollService } from '../../services/scroll.service';
 
 @Component({
   selector: 'app-my-booking',
@@ -12,6 +13,7 @@ import { AlertService } from '../../services/alert.service';
   styleUrl: './my-booking.css',
 })
 export class MyBooking implements OnInit {
+  private scrollService = inject(ScrollService);
   bookings: any[] = [];
   upcomingBookings: any[] = [];
   pastBookings: any[] = [];
@@ -27,6 +29,15 @@ export class MyBooking implements OnInit {
 
   ngOnInit() {
     this.loadMyBookings();
+  }
+
+  setActiveTab(tab: 'upcoming' | 'past') {
+    this.activeTab = tab;
+    // Ensure the scroll happens after DOM is updated
+    setTimeout(() => {
+      this.scrollService.scrollToTop('smooth');
+      this.scrollService.scrollToElement('my-bookings-top', 'smooth');
+    }, 50);
   }
 
   loadMyBookings() {
@@ -95,7 +106,7 @@ export class MyBooking implements OnInit {
     
     // If no upcoming bookings but have past ones, switch tab
     if (this.upcomingBookings.length === 0 && this.pastBookings.length > 0) {
-      this.activeTab = 'past';
+      this.setActiveTab('past');
     }
   }
 

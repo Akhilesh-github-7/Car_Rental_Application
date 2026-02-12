@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { AlertService } from '../../services/alert.service';
+import { ScrollService } from '../../services/scroll.service';
 
 @Component({
   selector: 'app-modal',
@@ -20,6 +21,7 @@ export class ModalComponent {
   alertService = inject(AlertService);
   router = inject(Router);
   fb = inject(FormBuilder);
+  scrollService = inject(ScrollService);
 
   activeTab: 'login' | 'register' = 'login';
   showPassword = signal(false);
@@ -91,6 +93,11 @@ export class ModalComponent {
     this.registerForm.reset();
     this.passwordStrengthScore.set(0);
     this.showPassword.set(false);
+    
+    // Scroll modal content to top on tab change
+    setTimeout(() => {
+      this.scrollService.scrollToTopInContainer('.modal-main', 'smooth');
+    }, 10);
   }
 
   togglePassword() {
