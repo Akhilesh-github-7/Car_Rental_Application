@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { AlertService } from '../../services/alert.service';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-car-details',
@@ -64,10 +65,10 @@ export class CarDetails implements OnInit {
     trimmedUrl = trimmedUrl.split(backslash).join('/');
     
     if (trimmedUrl.startsWith('/')) {
-      return trimmedUrl;
+      return environment.baseUrl + trimmedUrl;
     }
     
-    return '/' + trimmedUrl;
+    return environment.baseUrl + '/' + trimmedUrl;
   }
 
   getPlaceholderImage(): string {

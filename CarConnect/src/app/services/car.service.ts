@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarService {
 
-  private apiUrl = '/api/new-cars'; // Changed to fetch from new-cars endpoint
+  private apiUrl = environment.apiUrl + '/new-cars'; // Changed to fetch from new-cars endpoint
 
   constructor(private http: HttpClient) { }
 

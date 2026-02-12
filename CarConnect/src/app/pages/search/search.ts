@@ -6,6 +6,7 @@ import { CarService } from '../../services/car.service';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-search',
@@ -191,10 +192,10 @@ export class Search implements OnInit {
     trimmedUrl = trimmedUrl.split(backslash).join('/');
     
     if (trimmedUrl.startsWith('/')) {
-      return trimmedUrl;
+      return environment.baseUrl + trimmedUrl;
     }
     
-    return '/' + trimmedUrl;
+    return environment.baseUrl + '/' + trimmedUrl;
   }
 
   onImageError(event: Event) {

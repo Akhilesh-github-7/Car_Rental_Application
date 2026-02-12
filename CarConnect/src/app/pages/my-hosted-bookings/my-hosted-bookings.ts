@@ -4,6 +4,7 @@ import { BookingService } from '../../services/booking.service';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
 import { ScrollService } from '../../services/scroll.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-my-hosted-bookings',
@@ -152,6 +153,7 @@ export class MyHostedBookings implements OnInit {
     
     // Fix backslashes
     const backslash = String.fromCharCode(92);
-    return '/' + trimmed.split(backslash).join('/');
+    const sanitized = trimmed.split(backslash).join('/');
+    return sanitized.startsWith('/') ? environment.baseUrl + sanitized : environment.baseUrl + '/' + sanitized;
   }
 }

@@ -5,6 +5,7 @@ import { CarService } from '../../services/car.service';
 import { RouterLink } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
 import { ScrollService } from '../../services/scroll.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-my-booking',
@@ -148,7 +149,7 @@ export class MyBooking implements OnInit {
     const backslash = String.fromCharCode(92);
     trimmedUrl = trimmedUrl.split(backslash).join('/');
     
-    if (trimmedUrl.startsWith('/')) return trimmedUrl;
-    return '/' + trimmedUrl;
+    if (trimmedUrl.startsWith('/')) return environment.baseUrl + trimmedUrl;
+    return environment.baseUrl + '/' + trimmedUrl;
   }
 }

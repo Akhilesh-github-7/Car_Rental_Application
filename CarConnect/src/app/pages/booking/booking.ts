@@ -7,6 +7,7 @@ import { LocationService } from '../../services/location.service';
 import { BookingService } from '../../services/booking.service';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../services/alert.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-booking',
@@ -299,12 +300,12 @@ export class Booking implements OnInit {
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
     }
-    // If it's a relative path starting with /, return as is (proxy will handle it)
+    // If it's a relative path starting with /, return with baseUrl
     if (imageUrl.startsWith('/')) {
-      return imageUrl;
+      return environment.baseUrl + imageUrl;
     }
     // Otherwise, assume it's a relative path and add /
-    return '/' + imageUrl;
+    return environment.baseUrl + '/' + imageUrl;
   }
 
   onImageError(event: Event) {

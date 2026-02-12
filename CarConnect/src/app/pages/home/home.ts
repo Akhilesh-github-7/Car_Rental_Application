@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LocationService } from '../../services/location.service';
 import { CarService } from '../../services/car.service';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -82,6 +83,7 @@ export class Home implements OnInit {
     
     // Fix backslashes
     const backslash = String.fromCharCode(92);
-    return '/' + trimmed.split(backslash).join('/');
+    const sanitized = trimmed.split(backslash).join('/');
+    return sanitized.startsWith('/') ? environment.baseUrl + sanitized : environment.baseUrl + '/' + sanitized;
   }
 }
