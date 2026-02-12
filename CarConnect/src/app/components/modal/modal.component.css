@@ -20,7 +20,7 @@
   width: 100%;
   max-width: 850px;
   min-height: 550px;
-  max-height: 90vh; /* Ensure it fits on smaller vertical screens */
+  max-height: 90svh; /* Ensure it fits on smaller vertical screens */
   overflow-y: auto; /* Allow scrolling if content overflows */
   border-radius: 1.25rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -43,6 +43,7 @@
   height: 60px;
   width: auto;
   margin-bottom: 1.5rem;
+  filter: brightness(0) invert(1);
 }
 
 .brand-content h2 {
