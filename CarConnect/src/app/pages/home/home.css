@@ -33,7 +33,7 @@
   position: relative;
   height: 75dvh;
   min-height: 600px;
-  background-image: url('/images/Hero background.jpg');
+  background-image: url('../../../images/Hero background.jpg');
   background-size: cover;
   background-position: center;
   display: flex;
