@@ -32,9 +32,13 @@ CarConnect is a modern, full-stack car rental platform connecting car owners wit
 
 ## 📸 Screenshots
 
-Explore the application visuals here: [View Screenshots](https://github.com/Akhilesh-github-7/Car_Rental_Application/tree/dev/web%20screenshots)
+|   |   |
+|:---:|:---:|
+| ![App Screenshot 1](web%20screenshots/Screenshot%202026-02-12%20144405.png) | ![App Screenshot 2](web%20screenshots/Screenshot%202026-02-12%20144411.png) |
+| ![App Screenshot 3](web%20screenshots/Screenshot%202026-02-12%20144422.png) | ![App Screenshot 4](web%20screenshots/Screenshot%202026-02-12%20144428.png) |
+| ![App Screenshot 5](web%20screenshots/Screenshot%202026-02-12%20144506.png) | ![App Screenshot 6](web%20screenshots/Screenshot%202026-02-12%20144534.png) |
+| ![App Screenshot 7](web%20screenshots/Screenshot%202026-02-12%20144539.png) | ![App Screenshot 8](web%20screenshots/Screenshot%202026-02-12%20144546.png) |
 
-> *Note: Please visit the link above to see the latest interface designs including Home, Search, Booking, and Dashboard views.*
 
 ## 🚀 Getting Started
 
