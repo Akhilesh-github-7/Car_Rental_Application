@@ -15,7 +15,14 @@ app.use('/uploads', express.static('uploads')); // Serve uploaded files
 
 // Serve Angular static files
 const angularPath = path.join(__dirname, '../CarConnect/dist/CarConnect/browser');
+console.log('Serving Angular from:', angularPath);
+
 app.use(express.static(angularPath));
+
+// Explicitly handle favicon.ico to prevent 404 or index.html fallback
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(angularPath, 'favicon.ico'));
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
