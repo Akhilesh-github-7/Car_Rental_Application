@@ -1,0 +1,89 @@
+<div class="loading-container" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p>Loading details...</p>
+</div>
+
+<div class="car-details-container" *ngIf="!isLoading && car">
+  <!-- Top Navigation / Breadcrumb -->
+  <div class="breadcrumb">
+    <a routerLink="/search">&larr; Back to Search</a>
+  </div>
+
+  <div class="content-grid">
+    <!-- Left Column: Image -->
+    <div class="image-section">
+      <div class="main-image-wrapper">
+        <img [src]="getImageUrl(car.imageUrl)" [alt]="car.name" class="main-image">
+        <div class="owner-badge" *ngIf="isOwner">
+          <i class="fas fa-key"></i> You own this car
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Info -->
+    <div class="info-section">
+      <div class="header-info">
+        <h1 class="car-title">{{ car.brand }} {{ car.name }}</h1>
+        <div class="location-tag">
+          <i class="fas fa-map-marker-alt"></i> {{ car.locationId }}
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-header">
+          <span class="price-amount">₹{{ car.pricing }}</span>
+          <span class="price-unit">/ {{ car.pricingDescription }}</span>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-book" (click)="bookCar()" *ngIf="!isOwner">
+            Book Now
+          </button>
+          <button class="btn-edit" (click)="editCar()" *ngIf="isOwner">
+            <i class="fas fa-edit"></i> Edit Car
+          </button>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="label">Car Host</span>
+          <span class="value">{{ car.ownerName }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Vehicle No</span>
+          <span class="value">{{ car.vehicleNo }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Registered</span>
+          <span class="value">{{ car.registeredOn | date:'mediumDate' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Owner Contact</span>
+          <span class="value">{{ car.ownerNumber }}</span>
+        </div>
+      </div>
+
+      <div class="accessories-section" *ngIf="car.carAccessories?.length > 0">
+        <h3>Features & Accessories</h3>
+        <div class="tags-list">
+          <span class="feature-tag" *ngFor="let acc of car.carAccessories">
+            <i class="fas fa-check"></i> {{ $any(acc).accessoriesTitle }}
+          </span>
+        </div>
+      </div>
+
+      <div class="description-section">
+        <h3>Description</h3>
+        <p>Experience a smooth ride with this {{ car.brand }} {{ car.name }}. Perfect for city drives and weekend getaways. Well-maintained and comfortable.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="error-container" *ngIf="!isLoading && !car">
+  <div class="error-icon"><i class="fas fa-car-crash"></i></div>
+  <h2>Car Not Found</h2>
+  <p>The car you are looking for might have been removed or does not exist.</p>
+  <a routerLink="/search" class="btn-back">Browse Cars</a>
+</div>

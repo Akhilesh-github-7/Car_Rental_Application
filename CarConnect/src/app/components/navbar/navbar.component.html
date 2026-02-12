@@ -1,0 +1,63 @@
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="navbar-container">
+    <!-- Logo -->
+    <a routerLink="/home" class="navbar-logo" (click)="closeMenu()" aria-label="CarConnect Home">
+      <img src="/images/logo.png" alt="" aria-hidden="true" class="logo-image" />
+      <span class="logo-text">CARCONNECT</span>
+    </a>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-btn" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()" aria-label="Toggle navigation menu">
+      <i class="fas" [class.fa-bars]="!isMenuOpen()" [class.fa-times]="isMenuOpen()"></i>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="navbar-links" [class.active]="isMenuOpen()">
+      <div class="nav-item">
+        <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link" (click)="closeMenu()">Home</a>
+      </div>
+      <div class="nav-item">
+        <a routerLink="/search" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Search Cars</a>
+      </div>
+      <div class="nav-item">
+        <a routerLink="/host-your-car" routerLinkActive="active" class="nav-link highlight-link" (click)="closeMenu()">Host Your Car</a>
+      </div>
+      
+      <!-- Protected Links -->
+      <div class="nav-item">
+        <a routerLink="/my-booking" routerLinkActive="active" class="nav-link" (click)="handleProtectedLink($event, 'my-booking')">My Bookings</a>
+      </div>
+
+      <!-- User Section -->
+      <div class="nav-auth">
+        <ng-container *ngIf="!authService.isLoggedIn()">
+          <button class="btn-login" (click)="openLogin()" aria-label="Login or Register">
+            <i class="fas fa-user-circle"></i> Login / Register
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <div class="user-dropdown-container">
+            <button class="user-profile-btn" (click)="toggleUserDropdown()" [attr.aria-expanded]="isUserDropdownOpen()" aria-haspopup="true" aria-label="User menu">
+              <div class="user-avatar" aria-hidden="true">
+                {{ user?.username?.charAt(0).toUpperCase() || 'U' }}
+              </div>
+              <span class="user-name">{{ user?.username }}</span>
+              <i class="fas fa-chevron-down" [class.rotate]="isUserDropdownOpen()" aria-hidden="true"></i>
+            </button>
+            
+            <div class="dropdown-menu" [class.show]="isUserDropdownOpen()" role="menu">
+              <a routerLink="/my-hosted-bookings" class="dropdown-item" (click)="closeMenu()" role="menuitem">
+                <i class="fas fa-car-alt"></i> Hosted Bookings
+              </a>
+              <div class="dropdown-divider" role="separator"></div>
+              <button class="dropdown-item text-danger" (click)="logout()" role="menuitem">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</nav>

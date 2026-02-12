@@ -1,0 +1,220 @@
+<div class="booking-container" *ngIf="car">
+  <!-- Left Side: Car Image -->
+  <div class="car-image-card">
+    <img [src]="getImageUrl(car.imageUrl)" alt="{{ car.name }}" (error)="onImageError($event)">
+  </div>
+
+  <!-- Right Side: Car Details & Booking Form -->
+  <div class="booking-details">
+    <div class="car-header">
+      <div class="header-main">
+        <h2>{{ car.brand }} {{ car.name }}</h2>
+        <span class="owner-info-text">Hosted by <strong>{{ car.ownerName }}</strong></span>
+      </div>
+      <span class="vehicle-no">#{{ car.vehicleNo }}</span>
+      
+      <button *ngIf="isCarOwner && !isEditMode" class="edit-car-btn" (click)="enterEditMode()">Edit Car</button>
+      <button *ngIf="isCarOwner && isEditMode" class="cancel-edit-btn" (click)="cancelEdit()">Cancel Edit</button>
+    </div>
+    <p class="price-per-day">₹{{ car.pricing }} {{ car.pricingDescription }}</p>
+
+    <div class="accessories-section">
+      <h3>Accessories</h3>
+      <ul>
+        <li *ngFor="let accessory of car.carAccessories">{{ accessory.accessoriesTitle }}</li>
+      </ul>
+    </div>
+
+    <div class="registered-on">
+      <i class="fa fa-calendar"></i> Registered on {{ car.registeredOn | date: 'MMM d, y' }}
+    </div>
+
+    <!-- Edit Car Form (shown when owner clicks Edit) -->
+    <div *ngIf="isEditMode && isCarOwner" class="edit-car-form-card">
+      <h3>Edit Car Details</h3>
+      <form (ngSubmit)="updateCar()" #editForm="ngForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editBrand">Brand</label>
+            <input type="text" id="editBrand" [(ngModel)]="editBrand" name="editBrand" required>
+          </div>
+          <div class="form-group">
+            <label for="editName">Name</label>
+            <input type="text" id="editName" [(ngModel)]="editName" name="editName" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editPricing">Pricing (₹)</label>
+            <input type="number" id="editPricing" [(ngModel)]="editPricing" name="editPricing" required>
+          </div>
+          <div class="form-group">
+            <label for="editPricingDescription">Pricing Description</label>
+            <input type="text" id="editPricingDescription" [(ngModel)]="editPricingDescription" name="editPricingDescription" placeholder="e.g., per day" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editLocationId">District</label>
+            <select id="editLocationId" [(ngModel)]="editLocationId" name="editLocationId" required>
+              <option value="" disabled>Select district</option>
+              <option *ngFor="let district of districts" [value]="district">{{ district }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editRegisteredOn">Registered On</label>
+            <input type="date" id="editRegisteredOn" [(ngModel)]="editRegisteredOn" name="editRegisteredOn" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editVehicleNo">Vehicle Number</label>
+            <input type="text" id="editVehicleNo" [(ngModel)]="editVehicleNo" name="editVehicleNo" required>
+          </div>
+          <div class="form-group">
+            <label for="editOwnerNumber">Owner Number</label>
+            <input type="text" id="editOwnerNumber" [(ngModel)]="editOwnerNumber" name="editOwnerNumber" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Image Source</label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="editImageSource" value="url" [(ngModel)]="editImageSource">
+              Image URL
+            </label>
+            <label>
+              <input type="radio" name="editImageSource" value="upload" [(ngModel)]="editImageSource">
+              Upload from Storage
+            </label>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="editImageSource === 'url'">
+          <label for="editImageUrl">Image URL</label>
+          <input type="text" id="editImageUrl" [(ngModel)]="editImageUrl" name="editImageUrl" placeholder="https://example.com/car.jpg">
+        </div>
+        <div class="form-group" *ngIf="editImageSource === 'upload'">
+          <label for="editImageUpload">Upload Image</label>
+          <input type="file" id="editImageUpload" (change)="onEditFileSelected($event)" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label for="editNewAccessory">Accessories</label>
+          <div class="accessory-input-group">
+            <input type="text" id="editNewAccessory" [(ngModel)]="editNewAccessory" name="editNewAccessory" placeholder="Add accessory">
+            <button type="button" (click)="addEditAccessory()" class="add-accessory-btn">Add</button>
+          </div>
+          <ul class="accessories-list" *ngIf="editCarAccessories.length > 0">
+            <li *ngFor="let accessory of editCarAccessories; let i = index">
+              {{ accessory }}
+              <button type="button" (click)="removeEditAccessory(i)" class="remove-accessory-btn">×</button>
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="editSubmissionError" class="error-message">
+          {{ editSubmissionError }}
+        </div>
+        <div *ngIf="editSubmissionSuccess" class="success-message">
+          {{ editSubmissionSuccess }}
+        </div>
+        <button type="submit" class="update-car-btn">Update Car</button>
+      </form>
+    </div>
+
+    <!-- Booking Form Card (hidden when in edit mode or if user is owner) -->
+    <div class="booking-form-card" *ngIf="!isEditMode">
+      <div *ngIf="isCarOwner" class="owner-booking-warning">
+        <div class="warning-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>You cannot book your own car</h3>
+        <p>As the host of this vehicle, you have full access to manage its details and view bookings from others. Booking your own vehicle is not permitted.</p>
+        <button class="btn-manage" (click)="enterEditMode()">
+          <i class="fas fa-tasks"></i> Manage My Car
+        </button>
+      </div>
+
+      <div *ngIf="!isCarOwner">
+        <h3>Book this car</h3>
+        <form (ngSubmit)="bookNow()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pickupDate">Pick-up Date</label>
+              <input type="date" id="pickupDate" [(ngModel)]="pickupDate" name="pickupDate" required>
+            </div>
+            <div class="form-group">
+              <label for="dropOffDate">Drop-off Date</label>
+              <input type="date" id="dropOffDate" [(ngModel)]="dropOffDate" name="dropOffDate" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startTime">Start Time</label>
+              <input type="time" id="startTime" [(ngModel)]="startTime" name="startTime" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="selectedDistrict">District</label>
+              <select id="selectedDistrict" [(ngModel)]="selectedDistrict" name="selectedDistrict" required (ngModelChange)="onDistrictChange()">
+                <option value="" disabled>Select district</option>
+                <option *ngFor="let d of districts" [value]="d">{{ d }}</option>
+              </select>
+              <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 0.25rem;">Pickup and drop cities will show for the selected district</small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fromLocation">Pickup Location (City)</label>
+              <select id="fromLocation" [(ngModel)]="fromLocation" name="fromLocation" required [disabled]="!selectedDistrict">
+                <option value="" disabled>Select pickup city</option>
+                <option *ngFor="let opt of pickupDropOptions" [value]="opt.value">{{ opt.label }}</option>
+              </select>
+              <small *ngIf="selectedDistrict && pickupDropOptions.length === 0" style="color: #666; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+                Loading cities...
+              </small>
+              <small *ngIf="selectedDistrict && pickupDropOptions.length > 0 && locations.length === 0" style="color: #666; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+                No cities in Location DB for this district. Run seed: npm run seed-locations
+              </small>
+            </div>
+            <div class="form-group">
+              <label for="toLocation">Drop Location (City)</label>
+              <select id="toLocation" [(ngModel)]="toLocation" name="toLocation" required [disabled]="!selectedDistrict">
+                <option value="" disabled>Select drop city</option>
+                <option *ngFor="let opt of pickupDropOptions" [value]="opt.value">{{ opt.label }}</option>
+              </select>
+              <small *ngIf="selectedDistrict && pickupDropOptions.length === 0" style="color: #666; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+                Loading cities...
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="pickupAddress">Pickup Address</label>
+            <textarea id="pickupAddress" [(ngModel)]="pickupAddress" name="pickupAddress" rows="3" placeholder="Enter detailed pickup address" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="alternateContact">Alternate Contact</label>
+            <input type="text" id="alternateContact" [(ngModel)]="alternateContact" name="alternateContact" placeholder="Enter alternate contact number" required>
+          </div>
+          <div class="form-group">
+            <label>Driving Option</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="withDriver" [value]="false" [(ngModel)]="withDriver">
+                <span><i class="fas fa-user"></i> Self Drive</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="withDriver" [value]="true" [(ngModel)]="withDriver">
+                <span><i class="fas fa-user-tie"></i> With Driver</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="book-now-btn">Book Now</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!car" class="loading-message">
+  <p>Loading car details...</p>
+</div>

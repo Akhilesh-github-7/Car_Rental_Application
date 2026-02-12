@@ -1,0 +1,149 @@
+<div class="host-car-container">
+  <div class="host-car-card">
+    <div class="form-header">
+      <h2>Host Your Car</h2>
+      <p>Start earning by sharing your car with our community.</p>
+    </div>
+
+    <!-- Progress Stepper -->
+    <div class="stepper">
+      <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+        <div class="step-circle">1</div>
+        <span>Basics</span>
+      </div>
+      <div class="line" [class.active]="currentStep > 1"></div>
+      <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+        <div class="step-circle">2</div>
+        <span>Details</span>
+      </div>
+      <div class="line" [class.active]="currentStep > 2"></div>
+      <div class="step" [class.active]="currentStep >= 3">
+        <div class="step-circle">3</div>
+        <span>Photos</span>
+      </div>
+    </div>
+
+    <form (ngSubmit)="listCar()">
+      
+      <!-- STEP 1: The Basics -->
+      <div class="form-step" *ngIf="currentStep === 1">
+        <h3>Vehicle Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="brand">Brand <span class="required">*</span></label>
+            <input type="text" id="brand" [(ngModel)]="brand" name="brand" placeholder="e.g., Toyota, Maruti" required>
+          </div>
+          <div class="form-group">
+            <label for="name">Model <span class="required">*</span></label>
+            <input type="text" id="name" [(ngModel)]="name" name="name" placeholder="e.g., Swift, Innova" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="vehicleNo">Vehicle Number <span class="required">*</span></label>
+            <input type="text" id="vehicleNo" [(ngModel)]="vehicleNo" name="vehicleNo" placeholder="KL-01-AB-1234" required>
+          </div>
+          <div class="form-group">
+            <label for="registeredOn">Registration Date <span class="required">*</span></label>
+            <input type="date" id="registeredOn" [(ngModel)]="registeredOn" name="registeredOn" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Details & Pricing -->
+      <div class="form-step" *ngIf="currentStep === 2">
+        <h3>Location & Pricing</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="locationId">Location (District) <span class="required">*</span></label>
+            <select id="locationId" [(ngModel)]="locationId" name="locationId" required>
+              <option value="" disabled selected>Select District</option>
+              <option *ngFor="let district of locations" [value]="district">{{ district }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ownerNumber">Contact Number <span class="required">*</span></label>
+            <input type="tel" id="ownerNumber" [(ngModel)]="ownerNumber" name="ownerNumber" placeholder="Your mobile number" required pattern="[0-9]{10}">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pricing">Price (₹) <span class="required">*</span></label>
+            <input type="number" id="pricing" [(ngModel)]="pricing" name="pricing" placeholder="e.g., 2000" required>
+          </div>
+          <div class="form-group">
+            <label for="pricingDescription">Per <span class="required">*</span></label>
+            <select id="pricingDescription" [(ngModel)]="pricingDescription" name="pricingDescription">
+              <option value="per day">Day</option>
+              <option value="per hour">Hour</option>
+              <option value="per month">Month</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Images & Extras -->
+      <div class="form-step" *ngIf="currentStep === 3">
+        <h3>Car Images</h3>
+        
+        <div class="image-upload-section">
+          <div class="tabs">
+            <button type="button" class="tab-btn" [class.active]="imageSource === 'upload'" (click)="imageSource = 'upload'">Upload</button>
+            <button type="button" class="tab-btn" [class.active]="imageSource === 'url'" (click)="imageSource = 'url'">Image URL</button>
+          </div>
+
+          <div class="upload-area" *ngIf="imageSource === 'upload'">
+            <input type="file" id="imageUpload" (change)="onFileSelected($event)" accept="image/*" class="file-input">
+            <label for="imageUpload" class="file-label">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>Click to upload image</span>
+            </label>
+          </div>
+
+          <div class="url-input" *ngIf="imageSource === 'url'">
+            <input type="text" [(ngModel)]="imageUrl" name="imageUrl" placeholder="https://example.com/car-image.jpg" (input)="onUrlChange()">
+          </div>
+
+          <div class="image-preview" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Car Preview">
+          </div>
+        </div>
+
+        <h3>Accessories / Features</h3>
+        <div class="accessory-input-group">
+          <input type="text" [(ngModel)]="newAccessory" name="newAccessory" placeholder="Add feature (e.g. GPS, Bluetooth)">
+          <button type="button" class="btn-add" (click)="addAccessory()">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        <div class="tags-container">
+          <span class="tag" *ngFor="let acc of carAccessories; let i = index">
+            {{ acc }}
+            <button type="button" (click)="removeAccessory(i)">&times;</button>
+          </span>
+        </div>
+      </div>
+
+      <!-- Feedback Messages -->
+      <div class="feedback error" *ngIf="submissionError()">
+        <i class="fas fa-exclamation-circle"></i> {{ submissionError() }}
+      </div>
+      <div class="feedback success" *ngIf="submissionSuccess()">
+        <i class="fas fa-check-circle"></i> {{ submissionSuccess() }}
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="prevStep()" *ngIf="currentStep > 1">Back</button>
+        <button type="button" class="btn-primary" (click)="nextStep()" *ngIf="currentStep < totalSteps">Next</button>
+        <button type="submit" class="btn-submit" *ngIf="currentStep === totalSteps" [disabled]="isLoading()">
+          <span *ngIf="!isLoading()">List Car</span>
+          <span *ngIf="isLoading()"><i class="fas fa-spinner fa-spin"></i> Processing...</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

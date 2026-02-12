@@ -1,0 +1,133 @@
+<section class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Find your perfect rental car</h1>
+    <p class="hero-subtitle">Rent a car from trusted hosts or earn money by sharing your vehicle</p>
+    
+    <div class="search-container">
+      <form class="search-form" (ngSubmit)="onSearch()">
+        <div class="form-group location-group">
+          <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+          <input type="text" id="location" name="location" [(ngModel)]="location" placeholder="City, Airport, or Address" (input)="onLocationInput()" autocomplete="off">
+          <div class="location-dropdown" *ngIf="showDropdown">
+            <ul>
+              <li *ngFor="let loc of locations" (click)="selectLocation(loc)">
+                <i class="fas fa-map-pin"></i> {{ loc.title }}, {{ loc.city }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="from-date"><i class="fas fa-calendar-alt"></i> Pick-up</label>
+          <input type="date" id="from-date">
+        </div>
+        <div class="form-group">
+          <label for="to-date"><i class="fas fa-calendar-check"></i> Drop-off</label>
+          <input type="date" id="to-date">
+        </div>
+        <button type="submit" class="btn-search">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="how-it-works-section">
+  <div class="container">
+    <h2 class="section-title">How it works</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-icon">
+          <i class="fas fa-search-location"></i>
+        </div>
+        <h3>Find the perfect car</h3>
+        <p>Enter your location and dates to browse thousands of cars shared by local hosts.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <h3>Book your trip</h3>
+        <p>Book on the app or web, and say hello to your host. Cancel for free up to 24 hours before your trip.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-icon">
+          <i class="fas fa-road"></i>
+        </div>
+        <h3>Hit the road</h3>
+        <p>Have the car delivered or pick it up from your host. Check in with the app, grab the keys, and hit the road.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="featured-section" *ngIf="featuredCars.length > 0">
+  <div class="container">
+    <h2 class="section-title">Featured Cars</h2>
+    <div class="cars-grid">
+      <div class="car-card" *ngFor="let car of featuredCars" (click)="viewCarDetails(car._id)">
+        <div class="car-image-container">
+          <img [src]="getImageUrl(car.imageUrl)" [alt]="car.brand + ' ' + car.name" class="car-image">
+          <div class="car-price-badge">₹{{ car.pricing }} {{ car.pricingDescription }}</div>
+        </div>
+        <div class="car-details">
+          <h3>{{ car.brand }} {{ car.name }} <span class="car-year" *ngIf="car.registeredOn">{{ car.registeredOn | slice:0:4 }}</span></h3>
+          <div class="car-info">
+            <span><i class="fas fa-map-marker-alt"></i> {{ car.locationId }}</span>
+            <span *ngIf="car.vehicleNo"><i class="fas fa-car"></i> {{ car.vehicleNo }}</span>
+          </div>
+          <div class="host-info">
+            <i class="fas fa-star star-icon"></i> 5.0 (New)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="view-all-container">
+      <button class="btn-secondary" (click)="onSearch()">View all cars</button>
+    </div>
+  </div>
+</section>
+
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title">Why Choose CarConnect</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-car-side"></i>
+        </div>
+        <h3>Wide Selection</h3>
+        <p>Choose from a diverse range of cars to find the one that fits your needs and budget perfectly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Trusted & Safe</h3>
+        <p>All our hosts are verified, and we provide comprehensive insurance and 24/7 roadside assistance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-hand-holding-usd"></i>
+        </div>
+        <h3>Earn Money</h3>
+        <p>Turn your car into an income-generating asset by sharing it with our community of trusted renters.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-content">
+    <h2>Ready to hit the road?</h2>
+    <p>Join thousands of happy drivers and hosts on CarConnect today.</p>
+    <div class="cta-buttons">
+      <button class="btn-primary" (click)="onSearch()">Find a Car</button>
+      <button class="btn-outline" routerLink="/host-your-car">Host Your Car</button>
+    </div>
+  </div>
+</section>

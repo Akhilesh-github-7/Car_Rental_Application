@@ -1,0 +1,153 @@
+<div class="modal-overlay" *ngIf="modalService.getIsLoginModalOpen()()" (click)="closeModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Branding Sidebar (Hidden on small mobile) -->
+    <div class="modal-sidebar" aria-hidden="true">
+      <div class="brand-content">
+        <img src="/images/logo.png" alt="CarConnect Logo" class="sidebar-logo">
+        <h2>CARCONNECT</h2>
+        <p>Premium car rentals at your fingertips. Join our community of trusted hosts and drivers.</p>
+      </div>
+      <div class="sidebar-footer">
+        <i class="fas fa-shield-alt"></i> Secure Authentication
+      </div>
+    </div>
+
+    <!-- Form Area -->
+    <div class="modal-main">
+      <button class="modal-close" (click)="closeModal()" aria-label="Close Modal">&times;</button>
+      
+      <!-- Tabs -->
+      <div class="modal-tabs" role="tablist">
+        <button [class.active]="activeTab === 'login'" (click)="setTab('login')" role="tab" [attr.aria-selected]="activeTab === 'login'">Login</button>
+        <button [class.active]="activeTab === 'register'" (click)="setTab('register')" role="tab" [attr.aria-selected]="activeTab === 'register'">Register</button>
+      </div>
+
+      <!-- Login Section -->
+      <div class="form-content" *ngIf="activeTab === 'login'" role="tabpanel">
+        <div class="header-section">
+          <h2 id="modal-title">Welcome Back</h2>
+          <p class="tagline">Enter your credentials to access your account</p>
+        </div>
+
+        <p *ngIf="modalService.getLoginModalMessage()()" class="info-alert" role="alert">
+          <i class="fas fa-info-circle"></i> {{ modalService.getLoginModalMessage()() }}
+        </p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <input type="email" id="email" formControlName="email" placeholder="name@example.com" 
+                     [attr.aria-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            </div>
+            <div class="field-error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</span>
+              <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email.</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock" aria-hidden="true"></i>
+              <input [type]="showPassword() ? 'text' : 'password'" id="password" formControlName="password" placeholder="••••••••"
+                     [attr.aria-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              <button type="button" class="btn-toggle-pwd" (click)="togglePassword()" aria-label="Toggle password visibility">
+                <i class="fas" [class.fa-eye]="!showPassword()" [class.fa-eye-slash]="showPassword()"></i>
+              </button>
+            </div>
+            <div class="field-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              Password is required.
+            </div>
+          </div>
+
+          <div class="error-alert" *ngIf="loginError()" role="alert">
+            <i class="fas fa-exclamation-circle"></i> Invalid email or password.
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || isLoading()">
+            <span *ngIf="!isLoading()">Sign In</span>
+            <span *ngIf="isLoading()"><i class="fas fa-spinner fa-spin"></i> Authenticating...</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Register Section -->
+      <div class="form-content" *ngIf="activeTab === 'register'" role="tabpanel">
+        <div class="header-section">
+          <h2 id="modal-title">Create Account</h2>
+          <p class="tagline">Join thousands of happy users on CarConnect</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+          <div class="form-group">
+            <label for="regUsername">Username</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user" aria-hidden="true"></i>
+              <input type="text" id="regUsername" formControlName="username" placeholder="johndoe"
+                     [attr.aria-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            </div>
+            <div class="field-error" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+              Username must be at least 3 characters.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">Email Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <input type="email" id="regEmail" formControlName="email" placeholder="name@example.com"
+                     [attr.aria-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            </div>
+            <div class="field-error" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+              Please enter a valid email address.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock" aria-hidden="true"></i>
+              <input [type]="showPassword() ? 'text' : 'password'" id="regPassword" formControlName="password" placeholder="••••••••"
+                     [attr.aria-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+              <button type="button" class="btn-toggle-pwd" (click)="togglePassword()" aria-label="Toggle password visibility">
+                <i class="fas" [class.fa-eye]="!showPassword()" [class.fa-eye-slash]="showPassword()"></i>
+              </button>
+            </div>
+            
+            <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+               <div class="strength-bar">
+                 <div class="fill" [style.width.%]="passwordStrengthScore()" [style.background-color]="passwordStrengthColor()"></div>
+               </div>
+               <span class="strength-text" [style.color]="passwordStrengthColor()">{{ passwordStrengthLabel() }}</span>
+            </div>
+
+            <div class="field-error" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+              Password must be at least 6 characters.
+            </div>
+          </div>
+
+          <div class="success-alert" *ngIf="registrationSuccess()" role="alert">
+            <i class="fas fa-check-circle"></i> Account created! Redirecting...
+          </div>
+          <div class="error-alert" *ngIf="registrationError()" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> {{ registrationError() }}
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="registerForm.invalid || isLoading()">
+            <span *ngIf="!isLoading()">Create Account</span>
+            <span *ngIf="isLoading()"><i class="fas fa-spinner fa-spin"></i> Creating...</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <p *ngIf="activeTab === 'login'">New to CarConnect? <a href="#" (click)="$event.preventDefault(); setTab('register')">Create an account</a></p>
+        <p *ngIf="activeTab === 'register'">Already have an account? <a href="#" (click)="$event.preventDefault(); setTab('login')">Sign in</a></p>
+      </div>
+    </div>
+
+  </div>
+</div>

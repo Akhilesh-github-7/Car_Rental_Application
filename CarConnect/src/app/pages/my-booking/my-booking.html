@@ -1,0 +1,157 @@
+<div class="my-bookings-container">
+  <div class="page-header">
+    <h2>My Bookings</h2>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="activeTab = 'upcoming'">
+        Upcoming
+        <span class="count-badge" *ngIf="upcomingBookings.length > 0">{{ upcomingBookings.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'past'" (click)="activeTab = 'past'">
+        Past
+        <span class="count-badge" *ngIf="pastBookings.length > 0">{{ pastBookings.length }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading your trips...</p>
+  </div>
+
+  <!-- Booking List -->
+  <ng-container *ngIf="!isLoading">
+    
+    <!-- Upcoming Bookings -->
+    <div class="booking-list" *ngIf="activeTab === 'upcoming' && upcomingBookings.length > 0">
+      <div class="booking-card" *ngFor="let booking of upcomingBookings">
+        <div class="booking-image-wrapper">
+          <img [src]="getImageUrl(booking.imageUrl)" [alt]="booking.name" class="booking-car-image">
+          <div class="status-badge" 
+               [class.active]="booking.status === 'confirmed' || booking.status === 'active'"
+               [class.pending]="booking.status === 'pending'">
+            <i class="fas" 
+               [class.fa-check-circle]="booking.status === 'confirmed' || booking.status === 'active'"
+               [class.fa-clock]="booking.status === 'pending'"></i> 
+            {{ booking.status === 'pending' ? 'Pending Confirmation' : 'Confirmed' }}
+          </div>
+        </div>
+        
+        <div class="booking-details-content">
+          <div class="booking-header">
+            <h3>{{ booking.name }}</h3>
+            <span class="booking-id">ID: {{ booking._id | slice:-6 }}</span>
+          </div>
+          
+          <div class="trip-info">
+            <div class="info-row">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <span class="label">Date Range</span>
+                <span class="value">{{ booking.pickupDate | date:'mediumDate' }} - {{ booking.dropOffDate | date:'mediumDate' }}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <i class="fas fa-clock"></i>
+              <div>
+                <span class="label">Time</span>
+                <span class="value">{{ booking.departureTime }}</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <i class="fas" [class.fa-user]="!booking.withDriver" [class.fa-user-tie]="booking.withDriver"></i>
+              <div>
+                <span class="label">Driver</span>
+                <span class="value">{{ booking.withDriver ? 'With Driver' : 'Self Drive' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="location-box">
+            <div class="location-item">
+              <span class="dot pickup"></span>
+              <p><strong>Pickup:</strong> {{ booking.pickupLocation }}</p>
+            </div>
+            <div class="location-item">
+              <span class="dot drop"></span>
+              <p><strong>Drop:</strong> {{ booking.dropLocation }}</p>
+            </div>
+            <div class="address-box" *ngIf="booking.pickupAddress">
+              <i class="fas fa-map-marker-alt"></i> {{ booking.pickupAddress }}
+            </div>
+          </div>
+
+          <div class="price-section">
+            <span class="label">Total Price</span>
+            <span class="amount">{{ booking.totalPrice | currency:'INR' }}</span>
+          </div>
+
+          <div class="owner-contact">
+            <div class="owner-info">
+              <div class="avatar">{{ (booking.carOwnerName || 'H').charAt(0) }}</div>
+              <div>
+                <span class="owner-name">{{ booking.carOwnerName || 'Car Host' }}</span>
+                <span class="owner-label">Car Host</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn-cancel" (click)="cancelBooking(booking._id)">Cancel</button>
+              <a [href]="'tel:' + booking.carOwnerMobileNumber" class="btn-call">
+                <i class="fas fa-phone-alt"></i> Call
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Past Bookings -->
+    <div class="booking-list" *ngIf="activeTab === 'past' && pastBookings.length > 0">
+      <div class="booking-card past" *ngFor="let booking of pastBookings">
+        <div class="booking-image-wrapper">
+          <img [src]="getImageUrl(booking.imageUrl)" [alt]="booking.name" class="booking-car-image">
+          <div class="status-badge" [class.completed]="booking.status !== 'cancelled'" [class.cancelled]="booking.status === 'cancelled'">
+            <i class="fas" [class.fa-flag-checkered]="booking.status !== 'cancelled'" [class.fa-ban]="booking.status === 'cancelled'"></i>
+            {{ booking.status === 'cancelled' ? 'Cancelled' : 'Completed' }}
+          </div>
+        </div>
+        
+        <div class="booking-details-content">
+          <div class="booking-header">
+            <h3>{{ booking.name }}</h3>
+            <span class="date">{{ booking.pickupDate | date:'mediumDate' }}</span>
+          </div>
+          
+          <div class="location-summary">
+            <i class="fas fa-map-marker-alt"></i>
+            {{ booking.pickupLocation }} <i class="fas fa-arrow-right"></i> {{ booking.dropLocation }}
+          </div>
+
+          <div class="price-section small">
+            <span class="label">Paid</span>
+            <span class="amount">{{ booking.totalPrice | currency:'INR' }}</span>
+          </div>
+          
+          <button class="btn-book-again" routerLink="/search">Book Again</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty States -->
+    <div class="empty-state" *ngIf="activeTab === 'upcoming' && upcomingBookings.length === 0">
+      <div class="empty-icon"><i class="fas fa-calendar-times"></i></div>
+      <h3>No upcoming trips</h3>
+      <p>You have no active bookings at the moment.</p>
+      <a routerLink="/search" class="btn-browse">Browse Cars</a>
+    </div>
+
+    <div class="empty-state" *ngIf="activeTab === 'past' && pastBookings.length === 0">
+      <div class="empty-icon"><i class="fas fa-history"></i></div>
+      <h3>No past trips</h3>
+      <p>You haven't completed any trips with us yet.</p>
+    </div>
+
+  </ng-container>
+</div>

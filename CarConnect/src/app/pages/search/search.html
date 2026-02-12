@@ -1,0 +1,123 @@
+<div class="search-page-container">
+  
+  <!-- Sidebar Filters -->
+  <aside class="sidebar-filters">
+    <div class="filters-header">
+      <h2><i class="fas fa-filter"></i> Filters</h2>
+      <button class="btn-clear-mobile" (click)="clearFilters()">Clear</button>
+    </div>
+
+    <!-- Search Name -->
+    <div class="filter-group">
+      <label for="searchName">Search Car</label>
+      <div class="input-with-icon">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchName" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="E.g. Swift, Polo...">
+      </div>
+    </div>
+
+    <!-- Price Range -->
+    <div class="filter-group">
+      <label>Price Range (₹)</label>
+      <div class="price-inputs">
+        <input type="number" [(ngModel)]="minPrice" (change)="applyFilters()" placeholder="Min">
+        <span>-</span>
+        <input type="number" [(ngModel)]="maxPrice" (change)="applyFilters()" placeholder="Max">
+      </div>
+    </div>
+
+    <!-- Brand -->
+    <div class="filter-group">
+      <label for="brand">Brand</label>
+      <select id="brand" [(ngModel)]="selectedBrand" (change)="applyFilters()">
+        <option *ngFor="let brand of brands" [value]="brand">{{ brand }}</option>
+      </select>
+    </div>
+
+    <!-- Location -->
+    <div class="filter-group">
+      <label for="location">Location</label>
+      <select id="location" [(ngModel)]="selectedLocation" (change)="applyFilters()">
+        <option value="">All Locations</option>
+        <option *ngFor="let district of districts" [value]="district">{{ district }}</option>
+      </select>
+    </div>
+
+    <button class="btn-clear-desktop" (click)="clearFilters()">
+      <i class="fas fa-undo"></i> Reset Filters
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="results-container">
+    <!-- Top Bar -->
+    <div class="results-header">
+      <div class="results-count">
+        <h3>Available Cars</h3>
+        <span *ngIf="!isLoading">{{ cars.length }} vehicles found</span>
+      </div>
+
+      <div class="results-sort">
+        <label for="sort">Sort by:</label>
+        <select id="sort" [(ngModel)]="sortBy" (change)="onSortChange()">
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="newest">Newest Listed</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Finding the best cars for you...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && cars.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-car-crash"></i>
+      </div>
+      <h3>No cars found</h3>
+      <p>We couldn't find any cars matching your filters.</p>
+      <button class="btn-primary" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+    <!-- Car Grid -->
+    <div class="car-grid" *ngIf="!isLoading && cars.length > 0">
+      <div class="car-card" *ngFor="let car of cars">
+        <div class="card-image">
+          <img [src]="getImageUrl(car.imageUrl)" [alt]="car.name" (error)="onImageError($event)">
+          <div class="location-badge">
+            <i class="fas fa-map-marker-alt"></i> {{ car.locationId }}
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="card-header">
+            <h4 class="car-title">{{ car.brand }} {{ car.name }}</h4>
+            <span class="car-year" *ngIf="car.registeredOn">{{ car.registeredOn | slice:0:4 }}</span>
+          </div>
+          
+          <!-- Accessories / Features Tags -->
+          <div class="car-features" *ngIf="car.carAccessories?.length > 0">
+             <span class="feature-tag" *ngFor="let acc of car.carAccessories | slice:0:3">
+               {{ $any(acc).accessoriesTitle }}
+             </span>
+             <span class="feature-tag-more" *ngIf="car.carAccessories?.length > 3">+{{ car.carAccessories.length - 3 }}</span>
+          </div>
+
+          <div class="card-footer">
+            <div class="price-info">
+              <span class="price-amount">₹{{ car.pricing }}</span>
+              <span class="price-period">/ {{ car.pricingDescription || 'day' }}</span>
+            </div>
+            <button class="btn-details" (click)="onViewDetailsClick(car._id)">
+              Details <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
