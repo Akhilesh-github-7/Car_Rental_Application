@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -11,6 +12,10 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads')); // Serve uploaded files
+
+// Serve Angular static files
+const angularPath = path.join(__dirname, '../CarConnect/dist/CarConnect/browser');
+app.use(express.static(angularPath));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -24,8 +29,10 @@ app.use('/api/cars', require('./routes/cars'));
 app.use('/api/districts', require('./routes/districts'));
 app.use('/api/new-cars', require('./routes/new-cars'));
 app.use('/api/bookings', require('./routes/bookings'));
-app.get('/', (req, res) => {
-  res.send('Hello from CarConnect-server!');
+
+// Catch-all route to serve Angular app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(angularPath, 'index.html'));
 });
 
 // Start server
